@@ -3,12 +3,13 @@ import re
 from contextlib import suppress
 from difflib import SequenceMatcher
 from typing import Iterator
+from typing import List
 
 from . import Error, ErrorCode
 
 
 def iter_error_copy_paste(
-    lines: list[str],
+    lines: List[str],
     similarity_threshold: float = 0.9,
     only_same_length: bool = True,
 ) -> Iterator[Error]:

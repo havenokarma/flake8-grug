@@ -1,9 +1,10 @@
 import ast
+from typing import Optional
 
-from . import Error, ErrorCode
+from . import Error, ErrorCode, unparse
 
 
-def get_error_eval(node: ast.Call) -> Error | None:
+def get_error_eval(node: ast.Call) -> Optional[Error]:
     assert isinstance(node, ast.Call)
 
     if isinstance(node.func, ast.Name) and node.func.id == 'eval':
@@ -11,5 +12,5 @@ def get_error_eval(node: ast.Call) -> Error | None:
             lineno=node.lineno,
             col_offset=node.col_offset,
             code=ErrorCode.USING_EVAL,
-            snippet=ast.unparse(node),
+            snippet=unparse(node),
         )

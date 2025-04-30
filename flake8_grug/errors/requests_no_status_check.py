@@ -1,9 +1,10 @@
 import ast
+from typing import Optional
 
-from . import Error, ErrorCode, get_root
+from . import Error, ErrorCode, get_root, unparse
 
 
-def get_error_requests_no_status_check(node: ast.Call) -> Error | None:
+def get_error_requests_no_status_check(node: ast.Call) -> Optional[Error]:
     # this captures only `res = requests.get/post`, not `from requests import get; get(...)`
     assert isinstance(node, ast.Call)
 
@@ -33,7 +34,7 @@ def get_error_requests_no_status_check(node: ast.Call) -> Error | None:
         lineno=var.lineno,
         col_offset=var.col_offset,
         code=ErrorCode.REQUESTS_NO_STATUS_CHECK,
-        snippet=ast.unparse(assignment),
+        snippet=unparse(assignment),
     )
 
     try:
@@ -41,7 +42,7 @@ def get_error_requests_no_status_check(node: ast.Call) -> Error | None:
     except StopIteration:
         return error
 
-    next_line = ast.unparse(next_item)
+    next_line = unparse(next_item)
     if f'{var.id}.raise_for_status()' in next_line or \
        f'{var.id}.ok' in next_line:
        return
